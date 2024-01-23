@@ -12,10 +12,10 @@
 </head>
 <body>
 <header>
-	<h1>Sophie Bluel <span>Architecte d'intérieur</span></h1>
+	<a href="./index.html"><h1>Sophie Bluel <span>Architecte d'intérieur</span></h1></a>
 	<nav>
 		<ul>
-			<li>projets</li>
+			<a href="./index.html"><li>projets</li></a>
 			<li>contact</li>
 			<li><a href="./login.html">login</a></li>
 			<li><img src="./assets/icons/instagram.png" alt="Instagram"></li>
@@ -36,7 +36,13 @@
 	</section>
 	<section id="portfolio">
 		<h2>Mes Projets</h2>
-		
+
+		<ul class="filter-container">
+			<li>
+				<input class="filter filter-selected" type="submit" value="Tous">
+			</li>
+		</ul>
+
 		<div class="gallery">
 			<!--
 			<figure>

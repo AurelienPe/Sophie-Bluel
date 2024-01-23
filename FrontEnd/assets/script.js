@@ -2,7 +2,9 @@
 
 // ********** CONSTANTS **********
 
-const projects = "http://localhost:5678/api/works";
+const projects   = "http://localhost:5678/api/works";
+const categories = "http://localhost:5678/api/categories";
+const filter     = document.querySelector(".filter-container");
 
 // ********** VARIABLES **********
 
@@ -11,38 +13,79 @@ const projects = "http://localhost:5678/api/works";
 // ********** FUNCTIONS **********
 
 function addProjects() {
-    const projectContainer = document.querySelector(".gallery");
+  const projectContainer = document.querySelector(".gallery");
 
-    fetch(projects)
-        .then(response => response.json())
-        .then(data => {
+  fetch(projects)
+    .then(response => response.json())
+    .then(data => {
+      data.forEach(project => {
+        const figure = document.createElement("figure");
+        const image = document.createElement("img");
 
-            for (let i = 0; i < projects.length; i++) {
-                const project = data[i];
+        image.src = project.imageUrl;
+        image.alt = project.title;
 
-                const figure = document.createElement("figure");
+        const figCaption = document.createElement("figcaption");
+        figCaption.textContent = project.title;
 
-                const image = document.createElement("img");
-                image.src = project.imageUrl;
-                image.alt = project.title;
+        figure.appendChild(image);
+        figure.appendChild(figCaption);
+        projectContainer.appendChild(figure);
+      });
+    })
+    .catch(error => {
+      console.error(error);
+    });
+}
 
-                const figCaption = document.createElement("figcaption");
-                figCaption.textContent = project.title;
+function addFilters() {
+  const filterContainer = document.querySelector(".filter-container");
 
-                figure.appendChild(image);
-                figure.appendChild(figCaption);
+  fetch(categories)
+    .then(response => response.json())
+    .then(data => {
+      data.forEach(category => {
+        const li = document.createElement("li");
+        const button = document.createElement("input");
 
-                projectContainer.appendChild(figure);
-            }
+        button.type = "submit";
+        button.value = category.name;
+        button.classList.add("filter");
 
-        })
-        .catch(error => {
-            console.error(error);
-        });
+        li.appendChild(button);
+        filterContainer.appendChild(li);
+      });
+      addListeners();
+    })
+    .catch(error => {
+      console.error(error);
+    });
+}
 
+function filtersSelection(selectedButton) {
+  console.log("button clicked", selectedButton);
+  const buttons = document.querySelectorAll(".filter");
+
+  buttons.forEach(button => {
+    button.classList.remove("filter-selected");
+  });
+
+  selectedButton.classList.add("filter-selected");
+}
+
+function addListeners() {
+  console.log("adding listeners");
+  const buttons = document.querySelectorAll(".filter");
+
+  buttons.forEach(button => {
+    button.addEventListener("click", () => filtersSelection(button));
+  });
 }
 
 // ********** MAIN CODE **********
 
 addProjects();
+addFilters();
+
 console.log(projects);
+console.log(categories);
