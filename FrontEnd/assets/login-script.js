@@ -2,36 +2,48 @@
 
 // ********** CONSTANTS **********
 
-const submitButton  = document.querySelector('input[type="submit"]');
-const email         = "sophie.bluel@test.tld";
-const password      = "S0phie";
-
-// ********** VARIABLES **********
-
-let inputEmail;
-let inputPassword;
+const btnElt           = document.querySelector("button");
+const emailElt         = document.querySelector('input[type="email"]');
+const passwordElt      = document.querySelector('input[type="password"]');
+console.log(btnElt);
+console.log(emailElt);
+console.log(passwordElt);
 
 // ********** FUNCTIONS **********
 
-function addListeners() {
-    submitButton.addEventListener("click", submit);
-}
-
-function submit() {
-    inputEmail = document.getElementById("email").value;
-    inputPassword = document.getElementById("password").value;
-
-    if (inputEmail === email && inputPassword === password) {
-        window.location.href = "index.html";
-        alert("Login Successful!");
+async function login() {
+    console.log("submit");
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const auth = {
+        email: email,
+        password: password
     }
-        else {
-            alert("Login Failed!");
-        }
+    console.log(auth);
 
-    console.log(inputEmail, inputPassword);
+    const response = await fetch("http://localhost:5678/api/users/login", {
+        method: "POST",
+        mode: "cors",
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(auth)
+    })
+
+    if (response.ok) {
+        const login = await response.json();
+        console.log(login);
+        localStorage.setItem("token", login.token);
+        window.location.href = "index.html";
+    } else {
+        alert("Identifiants incorrects");
+    }
 }
 
 // ********** MAIN CODE **********
 
-addListeners();
+btnElt.addEventListener("click", () => {
+console.log("click");
+login();
+});
