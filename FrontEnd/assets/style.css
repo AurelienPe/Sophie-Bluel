@@ -169,7 +169,7 @@ margin: auto;
     box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 }
 
-input[type="submit"]{
+input[type="submit"], button{
     font-family: 'Syne';
     font-weight: 700;
     color: white;
@@ -198,6 +198,10 @@ a {
   color: inherit;
 }
 
+.d-none {
+  display: none;
+}
+
 input[type="submit"]:hover, .input[type="submit"]:focus {
   cursor: pointer;
 } 
@@ -212,9 +216,50 @@ input[type="submit"]:hover, .input[type="submit"]:focus {
   color: white;
 }
 
-.edit span:focus, .edit span:hover {
+.edit span:focus, .edit span:hover{
   cursor: pointer;
   text-decoration: underline;
+}
+
+.edit-panel {
+  display: none;
+  position: fixed;
+  width: 630px;
+  height: 690px;
+  background-color: white;
+  justify-content: center;
+  margin: auto 255px; 
+  border-radius: 10px;
+}
+
+h3 {
+  margin-top: 50px;
+  font-size: 1.4rem;
+}
+
+.fa-xmark {
+  position: absolute;
+  top: 20px;
+  right: 25px;
+}
+
+.fa-xmark:hover, .fa-xmark:focus {
+  cursor: pointer;
+}
+
+.grey-line {
+  position: absolute;
+  bottom: 120px;
+  background-color: lightgrey;
+  width: 420px;
+  height: 1px;
+}
+
+.add {
+  position: absolute;
+  bottom: 20px;
+  width: 240px;
+  height: 40px;
 }
 
 i {
@@ -234,7 +279,6 @@ i {
 }
 
 ul .filter {
-  font-size: 1.1rem;
   min-width: 100px;
   padding: 10px;
   height: auto;
@@ -264,3 +308,5 @@ form a{
   left: 0;
   width: 100%;
 }
+
+

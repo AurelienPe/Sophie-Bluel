@@ -5,10 +5,14 @@
 const projects   = "http://localhost:5678/api/works";
 const categories = "http://localhost:5678/api/categories";
 const filter     = document.querySelector(".filter-container");
+const editMod    = document.querySelector(".edit");
+const editPanel  = document.querySelector(".edit-panel");
+const closeBtn   = document.querySelector(".fa-xmark");
 
 // ********** VARIABLES **********
 
-
+let categoryId;
+let filtersId;
 
 // ********** FUNCTIONS **********
 
@@ -20,6 +24,7 @@ function addProjects() {
     .then(data => {
       data.forEach(project => {
         const figure = document.createElement("figure");
+        figure.dataset.categoryId = project.categoryId;
         const image = document.createElement("img");
 
         image.src = project.imageUrl;
@@ -31,6 +36,8 @@ function addProjects() {
         figure.appendChild(image);
         figure.appendChild(figCaption);
         projectContainer.appendChild(figure);
+
+        console.log(categoryId);
       });
     })
     .catch(error => {
@@ -47,6 +54,8 @@ function addFilters() {
       data.forEach(category => {
         const li = document.createElement("li");
         const button = document.createElement("input");
+        button.dataset.filtersId = category.id;
+        console.log(button.dataset.filtersId);
 
         button.type = "submit";
         button.value = category.name;
@@ -54,6 +63,7 @@ function addFilters() {
 
         li.appendChild(button);
         filterContainer.appendChild(li);
+        filtersId = category.id;
       });
       addListeners();
     })
@@ -63,14 +73,28 @@ function addFilters() {
 }
 
 function filtersSelection(selectedButton) {
-  console.log("button clicked", selectedButton);
   const buttons = document.querySelectorAll(".filter");
 
   buttons.forEach(button => {
     button.classList.remove("filter-selected");
   });
-
   selectedButton.classList.add("filter-selected");
+
+  const projects = document.querySelectorAll(".gallery figure");
+
+  if (selectedButton.value === "Tous") {
+    projects.forEach(project => {
+      project.classList.remove("d-none");
+    });
+  } else {
+    projects.forEach(project => {
+      if (project.dataset.categoryId === selectedButton.dataset.filtersId) {
+        project.classList.remove("d-none");
+      } else {
+        project.classList.add("d-none");
+      }
+    });
+  }
 }
 
 function addListeners() {
@@ -80,6 +104,8 @@ function addListeners() {
   buttons.forEach(button => {
     button.addEventListener("click", () => filtersSelection(button));
   });
+  editMod.addEventListener("click", () => editPanel.style.display = "flex");
+  closeBtn.addEventListener("click", () => editPanel.style.display = "none");
 }
 
 // ********** MAIN CODE **********
