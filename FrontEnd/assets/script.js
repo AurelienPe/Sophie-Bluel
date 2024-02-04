@@ -7,7 +7,10 @@ const categories = "http://localhost:5678/api/categories";
 const filter     = document.querySelector(".filter-container");
 const editMod    = document.querySelector(".edit");
 const editPanel  = document.querySelector(".edit-panel");
-const closeBtn   = document.querySelector(".fa-xmark");
+const addPanel   = document.querySelector(".add-panel");
+const closeBtn   = document.querySelectorAll(".fa-xmark");
+const addBtn     = document.querySelector("#add");
+const overlay    = document.querySelector(".overlay");
 
 // ********** VARIABLES **********
 
@@ -37,7 +40,22 @@ function addProjects() {
         figure.appendChild(figCaption);
         projectContainer.appendChild(figure);
 
-        console.log(categoryId);
+        if (localStorage.getItem("token")) {
+          const adminGalery = document.querySelector(".admin-galery");
+
+          const li = document.createElement("li");
+          const image = document.createElement("img");
+          const deleteBtn = document.createElement("i");
+          deleteBtn.classList.add("fa-solid", "fa-trash-can");
+
+          image.src = project.imageUrl;
+          image.alt = project.title;
+
+          li.appendChild(deleteBtn);
+          li.appendChild(image);
+          adminGalery.appendChild(li);
+          console.log("admin");
+        }
       });
     })
     .catch(error => {
@@ -97,21 +115,57 @@ function filtersSelection(selectedButton) {
   }
 }
 
+function setAdminDisplay() {
+  if (!localStorage.getItem("token")) {
+    document.querySelector(".edit").style.display = "none";
+    document.querySelector(".modify").style.display = "none";
+    document.querySelector("#logout").style.display = "none";
+  } else {
+    document.querySelector(".filter-container").style.display = "none";
+    document.querySelector("#login").style.display = "none";
+  }
+}
+
+function AddProjectsDiplay() {
+  addPanel.style.display = "flex";
+  editPanel.style.display = "none";
+}
+
+function logout() {
+  localStorage.removeItem("token");
+  window.location.reload();
+}
+
 function addListeners() {
-  console.log("adding listeners");
   const buttons = document.querySelectorAll(".filter");
 
   buttons.forEach(button => {
     button.addEventListener("click", () => filtersSelection(button));
   });
-  editMod.addEventListener("click", () => editPanel.style.display = "flex");
-  closeBtn.addEventListener("click", () => editPanel.style.display = "none");
+
+  editMod.addEventListener("click", () => {
+    editPanel.style.display = "flex";
+    overlay.style.display = "block";
+  });
+
+  document.querySelector(".modify").addEventListener("click", () => {
+  editPanel.style.display = "flex";
+  overlay.style.display = "block";
+  });
+
+  closeBtn.forEach(btn => {
+    btn.addEventListener('click', () => {editPanel.style.display = "none", addPanel.style.display = "none", overlay.style.display = "none";})
+  });
+  document.querySelector("#logout").addEventListener("click", () => logout());
+  document.querySelector("#add").addEventListener("click", (AddProjectsDiplay));
+  document.querySelector(".fa-arrow-left").addEventListener("click", () => {editPanel.style.display = "flex", addPanel.style.display = "none"});
 }
 
 // ********** MAIN CODE **********
 
 addProjects();
 addFilters();
+setAdminDisplay();
 
 console.log(projects);
 console.log(categories);
