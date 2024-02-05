@@ -20,7 +20,7 @@
 		<h3>Galerie photo</h3>
 
 		<ul class="admin-galery">
-
+			<!-- images ajouté ici par le script -->
 		</ul>
 
 		<div class="grey-line"></div>
@@ -35,21 +35,24 @@
 
 		<div class="add-photo">
 			<i class="fa-regular fa-image"></i>
-			<button id="photo-button"> + Ajouter une photo</button>
+			<label for="photo-button"> + Ajouter photo
+			<input type="file" id="photo-button" accept="image/png, image/jpeg">
+			</label>
+			<img class="preview" src="#" alt="">
 			<p>jpg, png : 4mo max</p>
 		</div>
+
 		<label for="title">Titre</label>
 		<input type="text" id="title">
 		
 		<label for="category">Catégorie</label>
-		<input list="categories" id="category" name="category">
-		<datalist id="categories">
-			<option value="Objets">
-			<option value="Appartements">
-			<option value="Hotels & restaurants">
-		</datalist>
+		<select id="categories">
+			<option value=" "></option>
+			<!-- option ajouté ici par le script -->
+		</select>
+
 		<div class="grey-line"></div>
-		<button id="add">Valider</button>
+		<button id="add-project">Valider</button>
 	</article>
 
 <header>

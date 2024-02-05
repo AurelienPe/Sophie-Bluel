@@ -54,7 +54,6 @@ function addProjects() {
           li.appendChild(deleteBtn);
           li.appendChild(image);
           adminGalery.appendChild(li);
-          console.log("admin");
         }
       });
     })
@@ -73,7 +72,6 @@ function addFilters() {
         const li = document.createElement("li");
         const button = document.createElement("input");
         button.dataset.filtersId = category.id;
-        console.log(button.dataset.filtersId);
 
         button.type = "submit";
         button.value = category.name;
@@ -82,7 +80,16 @@ function addFilters() {
         li.appendChild(button);
         filterContainer.appendChild(li);
         filtersId = category.id;
-      });
+        });
+        if (localStorage.getItem("token")) {
+          const categoryList = document.querySelector("#categories");
+          data.forEach(category => {
+            const option = document.createElement("option");
+            option.value = category.name;
+            option.textContent = category.name;
+            categoryList.appendChild(option);
+          });}
+
       addListeners();
     })
     .catch(error => {
@@ -111,6 +118,9 @@ function filtersSelection(selectedButton) {
       } else {
         project.classList.add("d-none");
       }
+
+      
+
     });
   }
 }
@@ -136,6 +146,63 @@ function logout() {
   window.location.reload();
 }
 
+function addPhoto() {
+  const elementsExcludingImg = document.querySelectorAll('.add-photo > *:not(img)');
+
+  const addPhoto = document.querySelector("#photo-button");
+  const preview = document.querySelector(".preview");
+
+  const file = addPhoto.files[0];
+
+      if (file) {
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+          preview.src = e.target.result;
+        }
+
+        reader.readAsDataURL(file);
+        elementsExcludingImg.forEach(element => {
+          element.style.display = "none";
+        })
+      } else {
+        preview.src = "#";
+      }
+    };
+
+async function newProjects() { /* code non fini et non fonctionel */
+  try {
+    const fileInput = document.getElementById("photo-button");
+    const file = addPhoto.files[0];
+    const res = await fetch("http://localhost:5678/api/users/works", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        image: file,
+        title: document.getElementById("title").value,
+        category: document.getElementById("categories").value
+      })
+    })
+    
+    if (res.ok) {
+      const login = await res.json();
+      localStorage.setItem("token", login.token);
+      window.location.href = "index.html";
+
+    } else {
+      alert("Identifiants incorrects");
+    }
+
+  } catch {
+    alert("Un problème est survenu !");
+    console.log(document.getElementById("photo-button").files[0])
+    console.log(document.getElementById("title").value)
+    console.log(document.getElementById("categories").value)
+  }
+}
+
 function addListeners() {
   const buttons = document.querySelectorAll(".filter");
 
@@ -159,13 +226,14 @@ function addListeners() {
   document.querySelector("#logout").addEventListener("click", () => logout());
   document.querySelector("#add").addEventListener("click", (AddProjectsDiplay));
   document.querySelector(".fa-arrow-left").addEventListener("click", () => {editPanel.style.display = "flex", addPanel.style.display = "none"});
-}
+  document.querySelector("#photo-button").addEventListener("change", addPhoto);
+  document.querySelector("#add-project").addEventListener("click", (event) => {
+  event.preventDefault();
+  newProjects();
+})}
 
 // ********** MAIN CODE **********
 
 addProjects();
 addFilters();
 setAdminDisplay();
-
-console.log(projects);
-console.log(categories);
