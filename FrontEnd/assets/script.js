@@ -118,9 +118,6 @@ function filtersSelection(selectedButton) {
       } else {
         project.classList.add("d-none");
       }
-
-      
-
     });
   }
 }
@@ -170,10 +167,23 @@ function addPhoto() {
       }
     };
 
-async function newProjects() { /* code non fini et non fonctionel */
+async function newProjects() { /* code non fini et non fonctionel*/
   try {
     const fileInput = document.getElementById("photo-button");
     const file = addPhoto.files[0];
+
+    const categoriesResponse = await fetch(categories);
+    console.log(categoriesResponse)
+    const categoriesData = await categoriesResponse.json();
+    console.log(categoriesData)
+    const categoryLookup = {};
+    categoriesData.forEach(category => {
+      categoryLookup[category.id] = category.name;
+      console.log(categoryLookup)
+    });
+
+    const categoryId = categoryLookup[document.getElementById("categories").value];
+
     const res = await fetch("http://localhost:5678/api/users/works", {
       method: "POST",
       headers: {
@@ -182,7 +192,7 @@ async function newProjects() { /* code non fini et non fonctionel */
       body: JSON.stringify({
         image: file,
         title: document.getElementById("title").value,
-        category: document.getElementById("categories").value
+        category: categoryId
       })
     })
     
@@ -199,7 +209,7 @@ async function newProjects() { /* code non fini et non fonctionel */
     alert("Un problème est survenu !");
     console.log(document.getElementById("photo-button").files[0])
     console.log(document.getElementById("title").value)
-    console.log(document.getElementById("categories").value)
+    console.log(categoryId)
   }
 }
 
