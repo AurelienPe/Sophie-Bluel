@@ -16,6 +16,7 @@ const overlay    = document.querySelector(".overlay");
 
 let categoryId;
 let filtersId;
+let selectedOption;
 
 // ********** FUNCTIONS **********
 
@@ -40,6 +41,7 @@ function addProjects() {
         figure.appendChild(figCaption);
         projectContainer.appendChild(figure);
 
+        /* code pour ajouter les images des projets dans le mode d'édition */
         if (localStorage.getItem("token")) {
           const adminGalery = document.querySelector(".admin-galery");
 
@@ -54,6 +56,12 @@ function addProjects() {
           li.appendChild(deleteBtn);
           li.appendChild(image);
           adminGalery.appendChild(li);
+
+          deleteBtn.addEventListener("click", () => {
+            const projectId = project.id;
+            console.log(projectId);
+            deleteProject(projectId);
+        });
         }
       });
     })
@@ -81,12 +89,17 @@ function addFilters() {
         filterContainer.appendChild(li);
         filtersId = category.id;
         });
+
+        /* code pour les options de categories pour l'ajout d'images */
         if (localStorage.getItem("token")) {
           const categoryList = document.querySelector("#categories");
           data.forEach(category => {
             const option = document.createElement("option");
-            option.value = category.name;
+            option.value = category.id;
             option.textContent = category.name;
+            categoryList.addEventListener('change', function() {
+              selectedOption = categoryList.value;
+});
             categoryList.appendChild(option);
           });}
 
@@ -167,49 +180,58 @@ function addPhoto() {
       }
     };
 
-async function newProjects() { /* code non fini et non fonctionel*/
+async function newProjects() { /* unfinished and non-functional code */
   try {
-    const fileInput = document.getElementById("photo-button");
-    const file = addPhoto.files[0];
-
-    const categoriesResponse = await fetch(categories);
-    console.log(categoriesResponse)
-    const categoriesData = await categoriesResponse.json();
-    console.log(categoriesData)
-    const categoryLookup = {};
-    categoriesData.forEach(category => {
-      categoryLookup[category.id] = category.name;
-      console.log(categoryLookup)
-    });
-
-    const categoryId = categoryLookup[document.getElementById("categories").value];
-
-    const res = await fetch("http://localhost:5678/api/users/works", {
+    const data = new FormData(document.querySelector('form'));
+    console.log("data1", data)
+    data.append("image", document.getElementById("photo-button").files[0]);
+    console.log("data2", data)
+    data.set("title", document.getElementById("title").value);
+    console.log("data3", data)
+    const res = await fetch("http://localhost:5678/api/works", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Accept": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("token")}`,
       },
-      body: JSON.stringify({
-        image: file,
-        title: document.getElementById("title").value,
-        category: categoryId
-      })
-    })
-    
+      body: data
+    });
+    console.log(res)
     if (res.ok) {
       const login = await res.json();
-      localStorage.setItem("token", login.token);
       window.location.href = "index.html";
 
     } else {
-      alert("Identifiants incorrects");
+      alert("erreur");
     }
 
   } catch {
     alert("Un problème est survenu !");
     console.log(document.getElementById("photo-button").files[0])
     console.log(document.getElementById("title").value)
-    console.log(categoryId)
+    console.log(selectedOption)
+    console.log("data4", data)
+  }
+}
+
+async function deleteProject(projectId) {
+  try {
+    const res = await fetch(`http://localhost:5678/api/works/${projectId}`, {
+      method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem("token")}`
+      },
+      body : projectId
+    })
+    console.log(res)
+    if (res.ok) {
+      const login = await res.json();
+    } else {
+      alert("erreur");
+    }
+  } catch (error) {
+    alert("Un problème est survenu !");
+    console.error(error);
   }
 }
 
@@ -240,7 +262,8 @@ function addListeners() {
   document.querySelector("#add-project").addEventListener("click", (event) => {
   event.preventDefault();
   newProjects();
-})}
+})
+}
 
 // ********** MAIN CODE **********
 

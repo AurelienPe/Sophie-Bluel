@@ -32,27 +32,28 @@
 		<i class="fa-solid fa-xmark"></i>
 
 		<h3>Ajout photo</h3>
+		<form enctype="multipart/form-data">
+			<div class="add-photo">
+				<i class="fa-regular fa-image"></i>
+				<label for="photo-button"> + Ajouter photo
+				<input type="file" id="photo-button" accept="image/png, image/jpeg">
+				</label>
+				<img class="preview" src="#" alt="">
+				<p>jpg, png : 4mo max</p>
+			</div>
 
-		<div class="add-photo">
-			<i class="fa-regular fa-image"></i>
-			<label for="photo-button"> + Ajouter photo
-			<input type="file" id="photo-button" accept="image/png, image/jpeg">
-			</label>
-			<img class="preview" src="#" alt="">
-			<p>jpg, png : 4mo max</p>
-		</div>
+			<label for="title">Titre</label>
+			<input type="text" id="title">
+			
+			<label for="category">Catégorie</label>
+			<select name="category" id="categories">
+				<option value=" "></option>
+				<!-- option ajouté ici par le script -->
+			</select>
 
-		<label for="title">Titre</label>
-		<input type="text" id="title">
-		
-		<label for="category">Catégorie</label>
-		<select id="categories">
-			<option value=" "></option>
-			<!-- option ajouté ici par le script -->
-		</select>
-
-		<div class="grey-line"></div>
-		<button id="add-project">Valider</button>
+			<div class="grey-line"></div>
+			<button id="add-project">Valider</button>
+		</form>
 	</article>
 
 <header>

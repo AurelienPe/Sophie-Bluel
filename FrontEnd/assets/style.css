@@ -551,6 +551,12 @@ h3 {
 
 .add-panel input, select {
   width: 68%;
+  border-right: 10px solid transparent;
+  background-color: white;
+}
+
+.add-panel form{
+  display: contents;
 }
 
 .preview {
@@ -568,6 +574,7 @@ h3 {
   padding-right : 0;
   font-size: 0.5rem;
   padding: 2px;
+  cursor: pointer;
 }
 
 footer {
