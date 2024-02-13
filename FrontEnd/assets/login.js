@@ -1,5 +1,9 @@
 "use strict";
 
+/**
+ * ?LOGIN
+ * *Function to handle user login.
+ */
 async function login() {
   try {
     const res = await fetch("http://localhost:5678/api/users/login", {

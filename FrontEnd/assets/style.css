@@ -93,6 +93,7 @@ video {
 }
 
 /* HTML5 display-role reset for older browsers */
+
 article,
 aside,
 details,
@@ -293,7 +294,7 @@ footer ul {
   margin: 2em
 }
 
-/* code que j'ai modifié */
+/* ?code que j'ai modifié */
 
 #contact input,
 .add-panel input,
@@ -304,7 +305,8 @@ select {
   height: 50px;
 }
 
-/* code que j'ai rajouté */
+/* ?code que j'ai rajouté */
+/* style global */
 
 body {
   background-color: #FFFEF8;
@@ -319,65 +321,30 @@ p {
   max-width: 400px;
 }
 
-nav img {
-  height: 22px;
-}
-
-.d-none {
-  display: none;
-}
-
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1;
-  display: none;
+h3 {
+  margin: 50px;
+  font-size: 1.4rem;
 }
 
 input[type="submit"]:hover,
-.input[type="submit"]:focus {
+.input[type="submit"]:focus,
+.fa-xmark:hover,
+.fa-xmark:focus,
+.fa-arrow-left:hover,
+.fa-arrow-left:focus {
   cursor: pointer;
 }
 
-.edit {
-  display: flex;
-  width: 100%;
-  height: 60px;
-  align-items: center;
-  justify-content: center;
-  background-color: black;
+.fa-trash-can {
+  position: absolute;
   color: white;
-}
-
-.edit span:focus,
-.edit span:hover,
-.modify:focus,
-.modify:hover {
+  background-color: black;
+  top: 15px;
+  right: 10px;
+  padding-right : 0;
+  font-size: 0.5rem;
+  padding: 2px;
   cursor: pointer;
-  text-decoration: underline;
-}
-
-.modify {
-  position: relative;
-  bottom: 5px;
-}
-
-[id="logout"] {
-  border: none ;
-  background-color: transparent;
-  font: inherit;
-  cursor: pointer;
-}
-
-[id="portfolio"] header {
-  display: flex;
-  justify-content: center;
-  align-items: baseline;
-  gap: 30px;
 }
 
 .fa-xmark,
@@ -402,49 +369,43 @@ input[type="submit"]:hover,
   padding-top: 10px;
 }
 
-.fa-xmark:hover,
-.fa-xmark:focus,
-.fa-arrow-left:hover,
-.fa-arrow-left:focus {
-  cursor: pointer;
+.d-none {
+  display: none;
 }
 
-.grey-line {
-  position: absolute;
-  bottom: 120px;
-  background-color: #cbd6dc;
-  width: 420px;
-  height: 1px;
+/* style des modales */
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+  display: none;
+}
+
+.edit {
+  display: flex;
+  width: 100%;
+  height: 60px;
+  align-items: center;
+  justify-content: center;
+  background-color: black;
+  color: white;
+}
+
+.edit span:focus,
+.edit span:hover,
+.modify:focus,
+.modify:hover {
+  cursor: pointer;
+  text-decoration: underline;
 }
 
 .fa-pen-to-square {
   padding-right: 5px;
-}
-
-.filter-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0 auto;
-}
-
-.filter-container li {
-  display: flex;
-  margin: 5px;
-}
-
-ul .filter {
-  min-width: 100px;
-  padding: 10px;
-  height: auto;
-  color: #1D6154;
-  background-color: transparent;
-  width: auto;
-}
-
-ul .filter-selected {
-  color: white;
-  background-color: #1D6154;
 }
 
 .edit-panel, .add-panel {
@@ -463,24 +424,15 @@ ul .filter-selected {
   transform: translate(-50%, -50%);
 }
 
-.edit-panel #add, .add-panel #add-project {
-  position: absolute;
-  bottom: 20px;
-  width: 240px;
-  height: 40px;
-  cursor: pointer;
-}
-
-h3 {
-  margin: 50px;
-  font-size: 1.4rem;
-}
-
 .edit-panel ul {
   display: flex;
   flex-wrap: wrap;
   width: 68%;
   justify-content: space-between;
+}
+
+.admin-galery li {
+  position: relative;
 }
 
 .admin-galery img {
@@ -489,14 +441,30 @@ h3 {
   margin: 10px 5px;
 }
 
-.admin-galery li {
-  position: relative;
+.grey-line {
+  position: absolute;
+  bottom: 120px;
+  background-color: #cbd6dc;
+  width: 420px;
+  height: 1px;
+}
+
+.edit-panel #add, .add-panel #add-project {
+  position: absolute;
+  bottom: 20px;
+  width: 240px;
+  height: 40px;
+  cursor: pointer;
 }
 
 .add-panel {
   display: none;
   flex-direction: column;
   align-items: center;
+}
+
+.add-panel form{
+  display: contents;
 }
 
 .add-photo {
@@ -506,12 +474,6 @@ h3 {
   background-color: #e8f1f6;
   width: 68%;
   margin-bottom: 20px;
-}
-
-.add-photo p {
-  font-size: 0.6rem;
-  padding-bottom: 20px;
-  color: gray;
 }
 
 .add-photo label {
@@ -540,6 +502,18 @@ h3 {
   cursor: pointer;
 }
 
+.preview {
+  max-height: 200px;
+  max-width: 200px;
+  object-fit: cover;
+}
+
+.add-photo p {
+  font-size: 0.6rem;
+  padding-bottom: 20px;
+  color: gray;
+}
+
 .add-photo label::after {
   color: black;
 }
@@ -555,26 +529,55 @@ h3 {
   background-color: white;
 }
 
-.add-panel form{
-  display: contents;
-}
+/* style de la page de base */
 
-.preview {
-  max-height: 200px;
-  max-width: 200px;
-  object-fit: cover;
-}
-
-.fa-trash-can {
-  position: absolute;
-  color: white;
-  background-color: black;
-  top: 15px;
-  right: 10px;
-  padding-right : 0;
-  font-size: 0.5rem;
-  padding: 2px;
+[id="logout"] {
+  border: none ;
+  background-color: transparent;
+  font: inherit;
   cursor: pointer;
+}
+
+nav img {
+  height: 22px;
+}
+
+[id="portfolio"] header {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 30px;
+}
+
+.modify {
+  position: relative;
+  bottom: 5px;
+}
+
+.filter-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}
+
+.filter-container li {
+  display: flex;
+  margin: 5px;
+}
+
+ul .filter {
+  min-width: 100px;
+  padding: 10px;
+  height: auto;
+  color: #1D6154;
+  background-color: transparent;
+  width: auto;
+}
+
+ul .filter-selected {
+  color: white;
+  background-color: #1D6154;
 }
 
 footer {

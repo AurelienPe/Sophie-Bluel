@@ -3,23 +3,18 @@
 // ********** CONSTANTS **********
 
 const projects   = "http://localhost:5678/api/works";
-const categories = "http://localhost:5678/api/categories";
-const filter     = document.querySelector(".filter-container");
-const editMod    = document.querySelector(".edit");
-const editPanel  = document.querySelector(".edit-panel");
-const addPanel   = document.querySelector(".add-panel");
-const closeBtn   = document.querySelectorAll(".fa-xmark");
-const addBtn     = document.querySelector("#add");
-const overlay    = document.querySelector(".overlay");
 
 // ********** VARIABLES **********
 
 let categoryId;
 let filtersId;
-let selectedOption;
 
 // ********** FUNCTIONS **********
 
+/**
+ * ?ADD PROJECTS
+ * *Function to add projects to the gallery.
+ */
 function addProjects() {
   const projectContainer = document.querySelector(".gallery");
 
@@ -57,10 +52,10 @@ function addProjects() {
           li.appendChild(image);
           adminGalery.appendChild(li);
 
-          deleteBtn.addEventListener("click", () => {
+          deleteBtn.addEventListener("click", (event) => {
             const projectId = project.id;
-            console.log(projectId);
             deleteProject(projectId);
+            event.preventDefault();
         });
         }
       });
@@ -70,10 +65,14 @@ function addProjects() {
     });
 }
 
+/**
+ * ?ADD FILTERS
+ * *Function to add filters to the filter container using the provided categories data.
+ */
 function addFilters() {
   const filterContainer = document.querySelector(".filter-container");
 
-  fetch(categories)
+  fetch("http://localhost:5678/api/categories")
     .then(response => response.json())
     .then(data => {
       data.forEach(category => {
@@ -90,9 +89,11 @@ function addFilters() {
         filtersId = category.id;
         });
 
-        /* code pour les options de categories pour l'ajout d'images */
+        /* code pour les options de catégories pour l'ajout d'images */
         if (localStorage.getItem("token")) {
           const categoryList = document.querySelector("#categories");
+          let selectedOption;
+
           data.forEach(category => {
             const option = document.createElement("option");
             option.value = category.id;
@@ -110,6 +111,10 @@ function addFilters() {
     });
 }
 
+/**
+ * ?FILTER SELECTION
+ * *Function to handle the selection of filters and update the display accordingly.
+ */
 function filtersSelection(selectedButton) {
   const buttons = document.querySelectorAll(".filter");
 
@@ -135,6 +140,10 @@ function filtersSelection(selectedButton) {
   }
 }
 
+/**
+ * ?SET ADMIN DISPLAY
+ * *Sets the display for admin users based on the presence of a token in local storage.
+ */
 function setAdminDisplay() {
   if (!localStorage.getItem("token")) {
     document.querySelector(".edit").style.display = "none";
@@ -146,48 +155,39 @@ function setAdminDisplay() {
   }
 }
 
-function AddProjectsDiplay() {
-  addPanel.style.display = "flex";
-  editPanel.style.display = "none";
-}
-
-function logout() {
-  localStorage.removeItem("token");
-  window.location.reload();
-}
-
+/**
+ * ?ADD PHOTO
+ * *Function to add a photo and display it in the preview.
+ */
 function addPhoto() {
   const elementsExcludingImg = document.querySelectorAll('.add-photo > *:not(img)');
-
   const addPhoto = document.querySelector("#photo-button");
   const preview = document.querySelector(".preview");
-
   const file = addPhoto.files[0];
 
-      if (file) {
-        const reader = new FileReader();
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      preview.src = e.target.result;
+    }
+    reader.readAsDataURL(file);
+    elementsExcludingImg.forEach(element => {
+      element.style.display = "none";
+    })
+  } else {
+    preview.src = "#";
+  }
+};
 
-        reader.onload = function(e) {
-          preview.src = e.target.result;
-        }
-
-        reader.readAsDataURL(file);
-        elementsExcludingImg.forEach(element => {
-          element.style.display = "none";
-        })
-      } else {
-        preview.src = "#";
-      }
-    };
-
-async function newProjects() { /* unfinished and non-functional code */
+/**
+ * ?NEW PROJECT
+ * *Function for creating new projects asynchronously.
+ */
+async function newProjects() {
   try {
     const data = new FormData(document.querySelector('form'));
-    console.log("data1", data)
     data.append("image", document.getElementById("photo-button").files[0]);
-    console.log("data2", data)
     data.set("title", document.getElementById("title").value);
-    console.log("data3", data)
     const res = await fetch("http://localhost:5678/api/works", {
       method: "POST",
       headers: {
@@ -196,7 +196,6 @@ async function newProjects() { /* unfinished and non-functional code */
       },
       body: data
     });
-    console.log(res)
     if (res.ok) {
       const login = await res.json();
       window.location.href = "index.html";
@@ -204,16 +203,15 @@ async function newProjects() { /* unfinished and non-functional code */
     } else {
       alert("erreur");
     }
-
   } catch {
     alert("Un problème est survenu !");
-    console.log(document.getElementById("photo-button").files[0])
-    console.log(document.getElementById("title").value)
-    console.log(selectedOption)
-    console.log("data4", data)
   }
 }
 
+/**
+ * ?DELETE PROJECT
+ * *Asynchronous function for deleting a project.
+ */
 async function deleteProject(projectId) {
   try {
     const res = await fetch(`http://localhost:5678/api/works/${projectId}`, {
@@ -221,9 +219,7 @@ async function deleteProject(projectId) {
       headers: {
         "Authorization": `Bearer ${localStorage.getItem("token")}`
       },
-      body : projectId
     })
-    console.log(res)
     if (res.ok) {
       const login = await res.json();
     } else {
@@ -235,8 +231,16 @@ async function deleteProject(projectId) {
   }
 }
 
+/**
+ * ?ADD LISTENERS
+ * Adds event listeners to various elements for handling filter, edit, and modification actions.
+ */
 function addListeners() {
-  const buttons = document.querySelectorAll(".filter");
+  const overlay    = document.querySelector(".overlay");
+  const buttons    = document.querySelectorAll(".filter");
+  const addPanel   = document.querySelector(".add-panel");
+  const editPanel  = document.querySelector(".edit-panel");
+  const editMod    = document.querySelector(".edit");
 
   buttons.forEach(button => {
     button.addEventListener("click", () => filtersSelection(button));
@@ -252,11 +256,12 @@ function addListeners() {
   overlay.style.display = "block";
   });
 
-  closeBtn.forEach(btn => {
+  document.querySelectorAll(".fa-xmark").forEach(btn => {
     btn.addEventListener('click', () => {editPanel.style.display = "none", addPanel.style.display = "none", overlay.style.display = "none";})
   });
-  document.querySelector("#logout").addEventListener("click", () => logout());
-  document.querySelector("#add").addEventListener("click", (AddProjectsDiplay));
+
+  document.querySelector("#logout").addEventListener("click", () => {localStorage.removeItem("token"), window.location.reload()});
+  document.querySelector("#add").addEventListener("click", () => {addPanel.style.display = "flex", editPanel.style.display = "none"()});
   document.querySelector(".fa-arrow-left").addEventListener("click", () => {editPanel.style.display = "flex", addPanel.style.display = "none"});
   document.querySelector("#photo-button").addEventListener("change", addPhoto);
   document.querySelector("#add-project").addEventListener("click", (event) => {
