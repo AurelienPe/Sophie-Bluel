@@ -17,6 +17,10 @@ let filtersId;
  */
 function addProjects() {
   const projectContainer = document.querySelector(".gallery");
+  const adminGalery = document.querySelector(".admin-galery");
+
+  projectContainer.innerHTML = "";
+  adminGalery.innerHTML = "";
 
   fetch(projects)
     .then(response => response.json())
@@ -38,7 +42,6 @@ function addProjects() {
 
         /* code pour ajouter les images des projets dans le mode d'édition */
         if (localStorage.getItem("token")) {
-          const adminGalery = document.querySelector(".admin-galery");
 
           const li = document.createElement("li");
           const image = document.createElement("img");
@@ -159,18 +162,17 @@ function setAdminDisplay() {
  * ?ADD PHOTO
  * *Function to add a photo and display it in the preview.
  */
-function addPhoto() {
+function addPhoto(selectedImage) {
   const elementsExcludingImg = document.querySelectorAll('.add-photo > *:not(img)');
   const addPhoto = document.querySelector("#photo-button");
   const preview = document.querySelector(".preview");
-  const file = addPhoto.files[0];
 
-  if (file) {
+  if (selectedImage) {
     const reader = new FileReader();
     reader.onload = function(e) {
       preview.src = e.target.result;
     }
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(selectedImage);
     elementsExcludingImg.forEach(element => {
       element.style.display = "none";
     })
@@ -183,11 +185,23 @@ function addPhoto() {
  * ?NEW PROJECT
  * *Function for creating new projects asynchronously.
  */
-async function newProjects() {
+async function newProjects(image, title, category) {
+  title = title.value;
+  category = category.value;
   try {
-    const data = new FormData(document.querySelector('form'));
-    data.append("image", document.getElementById("photo-button").files[0]);
-    data.set("title", document.getElementById("title").value);
+
+    if (!image || !title || !category) {
+      alert("Veuillez remplir tous les champs");
+      return;
+    }
+
+    document.getElementById("add-project").setAttribute("background-color", "#1D6154");
+
+    const data = new FormData();
+    data.append("image", image);
+    data.append("title", title);
+    data.append("category", category);
+
     const res = await fetch("http://localhost:5678/api/works", {
       method: "POST",
       headers: {
@@ -197,14 +211,22 @@ async function newProjects() {
       body: data
     });
     if (res.ok) {
-      const login = await res.json();
-      window.location.href = "index.html";
+      addProjects();
 
     } else {
       alert("erreur");
     }
   } catch {
     alert("Un problème est survenu !");
+  }
+}
+
+function checkFields(image, title, category, photoButton) {
+
+  if (image && title.value && category.value) {
+    photoButton.style.backgroundColor = "#1D6154";
+  } else {
+    photoButton.style.backgroundColor = "";
   }
 }
 
@@ -221,7 +243,7 @@ async function deleteProject(projectId) {
       },
     })
     if (res.ok) {
-      const login = await res.json();
+      addProjects();
     } else {
       alert("erreur");
     }
@@ -236,38 +258,71 @@ async function deleteProject(projectId) {
  * Adds event listeners to various elements for handling filter, edit, and modification actions.
  */
 function addListeners() {
-  const overlay    = document.querySelector(".overlay");
-  const buttons    = document.querySelectorAll(".filter");
-  const addPanel   = document.querySelector(".add-panel");
-  const editPanel  = document.querySelector(".edit-panel");
-  const editMod    = document.querySelector(".edit");
+  const buttons = document.querySelectorAll(".filter");
 
   buttons.forEach(button => {
     button.addEventListener("click", () => filtersSelection(button));
   });
 
-  editMod.addEventListener("click", () => {
+  if (localStorage.getItem("token")) {
+    const overlay     = document.querySelector(".overlay");
+    const addPanel    = document.querySelector(".add-panel");
+    const editPanel   = document.querySelector(".edit-panel");
+    const editMod     = document.querySelector(".edit");
+    const imageInput  = document.getElementById("photo-button");
+    const title       = document.getElementById("title");
+    const category    = document.getElementById("categories");
+    const photoButton = document.getElementById("add-project");
+    let image       = 0;
+
+    imageInput.addEventListener("change", () => {
+      image = imageInput.files[0];
+    })
+
+    editMod.addEventListener("click", () => {
+      editPanel.style.display = "flex";
+      overlay.style.display = "block";
+    });
+
+    document.querySelector(".modify").addEventListener("click", () => {
     editPanel.style.display = "flex";
     overlay.style.display = "block";
-  });
+    });
 
-  document.querySelector(".modify").addEventListener("click", () => {
-  editPanel.style.display = "flex";
-  overlay.style.display = "block";
-  });
+    document.querySelectorAll(".fa-xmark").forEach(btn => {
+      btn.addEventListener('click', () => {
+      editPanel.style.display = "none", 
+      addPanel.style.display = "none", 
+      overlay.style.display = "none";})
+    });
 
-  document.querySelectorAll(".fa-xmark").forEach(btn => {
-    btn.addEventListener('click', () => {editPanel.style.display = "none", addPanel.style.display = "none", overlay.style.display = "none";})
-  });
+    document.querySelector("#logout").addEventListener("click", () => {
+      localStorage.removeItem("token"), 
+      window.location.reload()});
 
-  document.querySelector("#logout").addEventListener("click", () => {localStorage.removeItem("token"), window.location.reload()});
-  document.querySelector("#add").addEventListener("click", () => {addPanel.style.display = "flex", editPanel.style.display = "none"()});
-  document.querySelector(".fa-arrow-left").addEventListener("click", () => {editPanel.style.display = "flex", addPanel.style.display = "none"});
-  document.querySelector("#photo-button").addEventListener("change", addPhoto);
-  document.querySelector("#add-project").addEventListener("click", (event) => {
-  event.preventDefault();
-  newProjects();
-})
+    document.querySelector("#add").addEventListener("click", () => {
+      addPanel.style.display = "flex", 
+      editPanel.style.display = "none"});
+
+    document.querySelector(".fa-arrow-left").addEventListener("click", () => {
+      editPanel.style.display = "flex", 
+      addPanel.style.display = "none"});
+
+    photoButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    newProjects(image, title, category)});
+
+    imageInput.addEventListener("input", () => checkFields(image, title, category, photoButton));
+
+    title.addEventListener("input", () => checkFields(image, title, category, photoButton));
+
+    category.addEventListener("input", () => checkFields(image, title, category, photoButton));
+
+    imageInput.addEventListener("change", () => {
+      const selectedImage = image;
+      addPhoto(selectedImage);
+    });
+  }
 }
 
 // ********** MAIN CODE **********
