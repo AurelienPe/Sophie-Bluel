@@ -485,7 +485,6 @@ input[type="submit"]:hover,
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Work Sans' sans-serif;
   font-size: 0.8rem;
   width: 170px;
   height: 35px;
